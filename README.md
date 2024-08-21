@@ -1,4 +1,4 @@
-# MDX-Blog (Scrieber)
+# MDX-Blog (Scribere)
 
 -	A web application where where user (admins) can create blog using MDX (rich markdown format) with custom components.  
 -	Supports Oauth2 authentication using Github and Google providers (Auth.js)
