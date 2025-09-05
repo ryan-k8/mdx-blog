@@ -8,6 +8,46 @@
 -	Implemented a live MDX Editor  with custom components supporting re-rendering of mdx (on error) on the fly using React error boundaries
 -	Redis cache for storing blur(image optimization on server using plaiceholder) and executing jobs (mailing,logs) with cron jobs.
 
+# Architecture (Legacy)
+```mermaid
+graph TD
+    subgraph "Browser"
+        A[User/Admin] --> B{Next.js Frontend}
+    end
+
+    subgraph "Next.js Application (Vercel)"
+        B --> C{NextAuth.js}
+        B --> D[API Routes]
+        B --> E[SSR/SSG/ISR Pages]
+        D --> F[BullMQ Job Producer]
+        E --> G[MDX Remote]
+    end
+
+    subgraph "Data & Services"
+        C --> H[OAuth Providers]
+        F --> I((Redis))
+        G --> J[GitHub Repository]
+        D --> K((PostgreSQL/NeonDB))
+        B --> L[Cloudinary]
+    end
+
+    subgraph "Background Jobs"
+        I --> M{BullMQ Worker}
+        M --> N[Email Service]
+    end
+
+    A -- "Logs in via" --> C
+    A -- "Creates/Edits Post" --> D
+    D -- "Stores MDX Content" --> J
+    D -- "Stores Metadata" --> K
+    F -- "Adds Job to Queue" --> I
+    M -- "Processes Job" --> N
+    N -- "Sends Email" --> A
+    E -- "Fetches Content for Rendering" --> J
+    E -- "Fetches Metadata" --> K
+    B -- "Uploads/Requests Images" --> L
+```
+
 
 ## Getting Started
 
